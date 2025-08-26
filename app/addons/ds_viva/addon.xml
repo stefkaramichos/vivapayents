@@ -1,0 +1,40 @@
+<?xml version="1.0"?>
+<addon scheme="3.0">
+    <id>ds_viva</id>
+    <name>Viva Wallet</name>
+    <description></description>
+    <version>1.0</version>
+    <priority>19000</priority>
+    <position>2200</position>
+    <supplier>Dataspot</supplier>
+    <supplier_link>https://www.dataspot.gr</supplier_link>
+
+    <settings edition_type="ROOT,ULT:VENDOR">
+        <sections>
+            <section id="general">
+                <items>
+                    <item id="client_id">
+                        <name>Client ID</name> 
+                        <type>input</type>
+                    </item>
+                    <item id="client_secret">
+                        <name>Client Secret</name>
+                        <type>input</type>
+                    </item>
+                    <item id="source_code">
+                        <name>Source Code</name>
+                        <type>input</type>
+                    </item>
+                    <item id="payment_id">
+                        <name>Δημιουργήστε έναν καινούριο τρόπο πληρωμής και συμπληρώστε το ID</name>
+                        <type>input</type>
+                    </item>
+                    <item id="notice" edition_type="ROOT">
+                        <type>info</type>
+                        <handler>fn_ds_viva_settings_url_notice</handler>
+                    </item>
+                </items>
+            </section>
+        </sections>
+    </settings>
+</addon>
