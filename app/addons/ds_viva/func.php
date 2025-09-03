@@ -48,7 +48,7 @@ function fn_ds_viva_place_order(&$order_id, &$action, &$order_status, &$cart, &$
 
     curl_close($ch);
     $token_data = json_decode($token_response, true);
-    error_log("Viva token response: " . print_r($token_data, true));
+    // error_log("Viva token response: " . print_r($token_data, true));
 
     if (!isset($token_data['access_token'])) {
         fn_log_event('general', 'error', ['message' => 'Invalid Viva token response: ' . $token_response]);
@@ -91,7 +91,7 @@ function fn_ds_viva_place_order(&$order_id, &$action, &$order_status, &$cart, &$
     curl_setopt($ch, CURLOPT_HTTPHEADER, $checkout_headers);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     $checkout_response = curl_exec($ch);
-
+ 
     if (curl_errno($ch)) {
         fn_log_event('general', 'error', ['message' => 'Curl error (checkout): ' . curl_error($ch)]);
         curl_close($ch);
@@ -100,47 +100,19 @@ function fn_ds_viva_place_order(&$order_id, &$action, &$order_status, &$cart, &$
 
     curl_close($ch);
     $checkout_data = json_decode($checkout_response, true);
-    error_log("Viva checkout response: " . print_r($checkout_data, true));
+    // error_log("Viva checkout response: " . print_r($checkout_data, true));
 
     if (isset($checkout_data['orderCode'])) {
         $order_code = $checkout_data['orderCode'];
         $redirect_url = 'https://www.vivapayments.com/web2?ref=' . $order_code  ;
         $_SESSION['viva_redirect_url'] = $redirect_url;
+        fn_redirect($redirect_url, true);
     } else {
         fn_log_event('general', 'error', ['message' => 'Viva order creation failed: ' . $checkout_response]);
         return;
     }
 }
 
-function fn_ds_viva_placement_routines(
-    $order_id,
-    $order_info,
-    $force_notification,
-    $clear_cart,
-    $action,
-    $display_notification
-) {
-    
-    $order_info = fn_get_order_info($order_id);
-    $payment_id = Registry::get('addons.ds_viva.payment_id');
-
-    if ($order_info['payment_method']['payment_id'] != $payment_id) {
-        return;
-    }
-
-    if (!empty($order_id) && isset($order_info['status']) && $order_info['status'] !== 'N') {
-
-        // Turn off notifications if you don't want double emails
-        $notify = [
-            'C' => false, // customer
-            'A' => false, // admin
-            'S' => false, // supplier/vendor
-        ];
-
-        // Change status to N
-        fn_change_order_status($order_id, 'N', $order_info['status'], $notify);
-    }
-} 
 
 function fn_handle_viva_failed_transaction($transaction_data)
 {
@@ -153,7 +125,7 @@ function fn_handle_viva_failed_transaction($transaction_data)
         if ($order_info) {
             // Set status to 'N' (not completed)
             fn_change_order_status($order_id, 'F', '', fn_get_notification_rules([]));
-            fn_log_event('orders', 'status_change', ['message' => "Viva payment failed. Order #$order_id status set to 'N'."]);
+            // fn_log_event('orders', 'status_change', ['message' => "Viva payment failed. Order #$order_id status set to 'N'."]);
         } else {
             fn_log_event('general', 'error', ['message' => "Order #$order_id not found when handling Viva failure."]);
         }
@@ -173,7 +145,7 @@ function fn_handle_viva_success_transaction($transaction_data)
         if ($order_info) {
             // Set status to 'N' (not completed)
             fn_change_order_status($order_id, 'O', '', fn_get_notification_rules([],true));
-            fn_log_event('orders', 'status_change', ['message' => "Viva payment failed. Order #$order_id status set to 'O'."]);
+            // fn_log_event('orders', 'status_change', ['message' => "Viva payment failed. Order #$order_id status set to 'O'."]);
         } else {
             fn_log_event('general', 'error', ['message' => "Order #$order_id not found when handling Viva failure."]);
         }
