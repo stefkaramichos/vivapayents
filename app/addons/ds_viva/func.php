@@ -144,7 +144,7 @@ function fn_handle_viva_success_transaction($transaction_data)
         $order_info = fn_get_order_info($order_id);
         if ($order_info) {
             // Set status to 'N' (not completed)
-            fn_change_order_status($order_id, 'O', '', fn_get_notification_rules([],true));
+            fn_change_order_status($order_id, 'O', '', fn_get_notification_rules([]));
             // fn_log_event('orders', 'status_change', ['message' => "Viva payment failed. Order #$order_id status set to 'O'."]);
         } else {
             fn_log_event('general', 'error', ['message' => "Order #$order_id not found when handling Viva failure."]);
