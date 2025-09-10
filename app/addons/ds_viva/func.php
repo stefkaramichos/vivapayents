@@ -11,6 +11,10 @@ function fn_ds_viva_place_order(&$order_id, &$action, &$order_status, &$cart, &$
         return;
     }
 
+    if (defined('AREA') && AREA === 'A') {
+        return;
+    }
+
     $order_info = fn_get_order_info($order_id);
     $payment_id = Registry::get('addons.ds_viva.payment_id');
 
